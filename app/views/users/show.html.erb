@@ -1,0 +1,203 @@
+<div class="columns">
+    
+    <div class="column">
+        <div class="box" style="margin-top: 4%; max-height: 95vh;">
+            <!-- START -->
+                <h5 class="title is-5 has-text-link has-text-centered is-italic has-text-weight-bold is-family-code">
+                ~ Camelike ~
+                </h5> 
+                <span style='margin-left: 17%'>
+                    <a class="is-size-7" href="/posts"> Home </a> | 
+                    <a class="is-size-7" href="/posts/new"> New Post </a> |
+                    <span class="is-size-7"> <%= link_to "Profile", user_path(@current_user.id) %> |
+                    <a class="is-size-7" rel="nofollow" data-method="delete" href="/logout"> Logout </a>
+                </span>
+                <hr>
+                <h5 class="title is-5 has-text-link has-text-centered is-family-code">
+                    -<%= @user.username %>-
+                </h5>               
+                <figure class="image is-5by4 ">
+                    <img src=<%= @user.img_url %> alt=<%= @user.username %>>
+                </figure>
+                <h6 class="is-medium has-text-centered has-text-weight-bold is-family-code"><%= @user.name %></h6> 
+                <h6 class="is-small has-text-centered is-italic has-text-weight-semibold "><%= @user.bio %></h6>
+                <% if @current_user != @user %>
+                    <% if @user.followings.include?(@current_user) %>  
+                            <div style="margin-left: 40%"><%=button_to "unfollow ", follow_path(@user.id), method: :post%></div>
+                    <% else %>
+                        <div style="margin-left: 40%"><%= button_to "follow ", user_follows_path(@user.id)%></div>
+                    <% end %>
+                <% end %> 
+                <!-- removed edit profile option for now-->
+                <hr>
+                
+                <div class="columns">
+                    <div class="column">
+                        <% if @user.followers.count > 0 %>
+                            <small><p class="has-text-link bd-notification has-text-weight-bold has-text-centered"><%= @user.followers.count%> following</p></small>
+                            <% @user.followers.each do |follower| %>
+                                <div class="level-item is-size-7">
+                                    <figure class="image is-16x16">
+                                        <img class="is-rounded" src=<%= follower.img_url %> alt=<%= follower.username %>>
+                                    </figure>
+                                    <%= link_to follower.username, user_path(follower.id) %>
+                                </div>
+                            <% end %>
+                        <% end %>
+                    </div>
+                    <div class="column">
+                        <% if @user.followings.count > 0 %>
+                            <small><p class="has-text-link bd-notification is-info has-text-weight-bold has-text-centered"><%= @user.followings.count%> followers</p></small>
+                            <% @user.followings.each do |following| %>
+                                <div class="level-item is-size-7">
+                                    <figure class="image is-16x16">
+                                        <img class="is-rounded" src=<%= following.img_url %> alt=<%= following.username %>>
+                                    </figure>
+                                    <%= link_to following.username, user_path(following.id) %>
+                                </div>
+                            <% end %>
+                        <% end %>
+                    </div>
+                </div>
+            <!-- END -->
+            
+        </div>
+    </div>
+
+    <div class="column is-8">
+        <div class="box" style="margin-top: 2%; max-height: 97vh; overflow: scroll;">
+            <!-- START -->
+            <% if @user.posts.count > 0 %>
+                <% @user.posts.each do |post| %>
+                    <!-- START OF ARTICLE -->
+                    <article class="media">
+                        <figure class="image media-left is-64x64">
+                            <img src= <%= post.user.img_url %> alt="<%= post.user.name %>">
+                        </figure>
+                        
+                        <div class="media-content">
+                            <div class="content">
+                                <div class="media-left">
+                                    <strong>
+                                        <%= link_to post.user.name, user_path(post.user.id) %>
+                                    </strong> 
+                                    <small>
+                                        @<%= post.user.username %>
+                                        <br/>
+                                        <span class="is-italic is-size-7">
+                                            <%= post.created_at.strftime("%m-%d-%Y")%>
+                                        </span>
+                                    </small> 
+                                    <br/>
+                                    <span class="has-text-weight-semi-bold has-text-black-ter" style="margin-left: 2%; max-height: 10vh; overflow:scroll;">
+                                        <%= post.content %>
+                                    </span>
+                                    <br/>
+                                    <small class="is-size-7 is-italic">
+                                        <% if post.likes.count > 0 %> 
+                                            💕by 
+                                            <%- liked_users= post.liked_users.map {|user| user.username}.join(', ') %>
+                                            <%= liked_users %>
+                                        <% end %>
+                                    </small>
+                                    <br/>
+                                    <small class="is-size-7">
+                                        <% if post.user.id != @current_user%>
+                                            <% if post.liked_users.include?(@current_user)%>
+                                                <%= link_to "Unlike", like_path(post.id), method: :delete %> ·
+                                            <% elsif post.user == @current_user %>
+                                            <% else %>
+                                                <%= link_to "Like", post_likes_path(post.id), method: :post%> ·
+                                            <% end %>
+                                        <% end %>
+                                    </small>  
+                                    <small class="is-size-7">
+                                        <% if  post.comments.count == 1 %>
+                                            <%= post.comments.size %> comment
+                                        <% elsif post.comments.count > 1 %>
+                                            <%= post.comments.size %> comments
+                                        <% else %>
+                                            0 comments
+                                        <% end %>  ·
+                                        <%= link_to "View Post", post_path(post.id)%> 
+                                        <% if post.user == @current_user%>
+                                            · <%= link_to "Edit", edit_post_path(post.id)%> 
+                                            · <%= link_to "Delete", post_path(post), method: :delete, data: { confirm: "Are you sure?" }%>
+                                        <% end %>
+                                    </small>
+                            </div>
+                        
+                            <% if post.comments.count > 0 %>
+                                    <!-- FIRST COMMENT -->
+                                    <article class="media">
+                                        <figure class="media-left">
+                                            <p class="image is-64x64">
+                                                <img src=<%= post.comments.first.user.img_url %> alt="<%= post.comments.first.user.name %>">
+                                            </p>
+                                        </figure>
+                                        <div class="media-content">
+                                            <div class="content">
+                                                <strong>
+                                                    <%= link_to post.comments.first.user.name, user_path(post.comments.first.user.id) %>
+                                                </strong> 
+                                                <small>
+                                                    @<%= post.comments.first.user.username %>
+                                                    <br/>
+                                                </small> 
+                                                    <span class="has-text-black-ter" style="margin-left: 2%; max-height: 13vh; overflow:scroll;">
+                                                        <%= post.comments.first.content %>
+                                                    </span>
+                                                <br>
+                                                <small>
+                                                    <span class="is-italic is-size-7">
+                                                        <%= post.comments.first.created_at.strftime("%m-%d-%Y")%>
+                                                    </span>
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </article>
+                                    <!-- END FIRST COMMENT -->
+                                    <!-- START SECOND COMMENT -->
+                                    <% if post.comments.count > 1 %>
+                                        <article class="media">
+                                            <figure class="media-left">
+                                                <p class="image is-64x64">
+                                                    <img src=<%= post.comments.second.user.img_url %> alt="<%= post.comments.second.user.name %>">
+                                                </p>
+                                            </figure>
+                                            <div class="media-content">
+                                                <div class="content">
+                                                    <strong>
+                                                        <%= link_to post.comments.second.user.name, user_path(post.comments.second.user.id) %>
+                                                    </strong> 
+                                                    <small>
+                                                        @<%= post.comments.second.user.username %>
+                                                        <br/>
+                                                    </small> 
+                                                    <span class="has-text-black-ter" style="margin-left: 2%; max-height: 13vh; overflow:scroll;">
+                                                        <%= post.comments.second.content %>
+                                                    </span>
+                                                    <br>
+                                                    <small> 
+                                                        <span class="is-italic is-size-7">
+                                                            <%= post.comments.second.created_at.strftime("%m-%d-%Y")%>
+                                                        </span>
+                                                    </small> 
+                                                    
+                                                </div>
+                                            </div>
+                                        </article>
+                                    <% end %>
+                                    <!-- END SECOND COMMENT -->
+                            <% end %>
+
+                        </div>
+                    </article>
+                    <!-- END OF ARTICLE -->
+                <% end %>
+            <%end%>
+            <!-- END -->
+        </div>
+    </div>
+
+</div>

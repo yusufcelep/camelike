@@ -1,0 +1,2 @@
+class TagpostsController < ApplicationController
+end

@@ -1,0 +1,110 @@
+<div class="columns">
+  <div class="column">
+    <!-- Start -->
+    <div class="box" style="margin-top: 10%;">
+        <% if @current_user %>
+            <h5 class="title is-5 has-text-link has-text-centered is-italic has-text-weight-bold is-family-code">
+            ~ Camelike ~
+            </h5> 
+            <span style='margin-left: 17%'>
+                    <a class="is-size-7" href="/posts"> Home </a> | 
+                    <a class="is-size-7" href="/posts/new"> New Post </a> |
+                    <span class="is-size-7"> <%= link_to "Profile", user_path(@current_user.id) %> |
+                    <a class="is-size-7" rel="nofollow" data-method="delete" href="/logout"> Logout </a>
+            </span>
+        <% else %>
+          <h5 class="title is-5 has-text-link has-text-centered is-italic has-text-weight-bold is-family-code">
+            Welcome to Camelike!
+          </h5>
+          <span style='margin-left: 27%'>
+            <a class="is-normal" href=/login > Log in </a> or
+            <a class="is-normal" href=/signup > Sign up </a>
+          </span>
+        <% end %>
+    </div>
+    <div class="box">
+      <%= render :partial => 'form' %>
+    </div>
+    <!-- End -->
+  </div>
+
+  <div class="column is-8">
+    <!-- Start -->
+    <div class="box" style="margin-top: 2%; max-height: 96vh; overflow: scroll;">
+    <h4 class="title is-4 is-spaced has-text-link is-family-code" style="margin-left:35%;">Posts:</h4>
+    <% @posts.each do |post|%>
+      <article class="media">
+        <figure class="image media-left is-64x64">
+            <img src= <%= post.user.img_url %> alt="<%= post.user.name %>">
+        </figure>
+        <div class="media-content">
+          <div class="content">
+              <strong>
+                <%= link_to post.user.name, user_path(post.user.id) %>
+              </strong> 
+              <small>
+                @<%= post.user.username %>
+                <br/>
+                <span class="is-italic is-size-7"><%= post.created_at.strftime("%m-%d-%Y")%></span>
+              </small> 
+              <br>
+              <div class="has-text-weight-semi-bold has-text-black-ter" style="margin-left: 2%; max-height: 13vh; overflow:scroll;">
+                <%= post.content %>
+              </div>
+          </div>
+          <small class="is-small is-italic">
+                <% if post.likes.count > 0 %> 
+                  💕by 
+                  <%- liked_users= post.liked_users.map {|user| user.username}.join(', ') %>
+                  <%= liked_users %>
+                <% end %>
+          </small><br/>
+          <% if post.user.id != @current_user%>
+              <small class="is-size-7">
+                <% if post.liked_users.include?(@current_user)%>
+                    <%= link_to "Unlike", like_path(post.id), method: :delete %> ·
+                <% elsif post.user == @current_user %>
+                <% else %>
+                    <%= link_to "Like", post_likes_path(post.id), method: :post%> ·
+                <% end %>
+              </small>  
+          <% end %>
+
+          <small class="is-size-7">
+            <% if  post.comments.count == 1 %>
+              <%= post.comments.size %> comment
+            <% elsif post.comments.count > 1 %>
+              <%= post.comments.size %> comments
+            <% else %>
+              0 comments
+            <% end %>
+          </small> ·
+        <small class="is-size-7"><%= link_to "View Post", post_path(post.id)%></small>
+        </div>
+        <div class="media-right" style="margin-right: 2%;">
+              <div class="level-right">
+                <p class="level-item">
+                  <% if post.user == @current_user %>
+                    <div class="navbar-item has-dropdown is-hoverable">
+                      <a class="navbar-link is-arrowless">
+                      ⋮⋮⋮
+                      </a>
+                      <div class="navbar-dropdown" style="max-width: 1%;">
+                        <div class="navbar-item" style="margin-left: 0%;">
+                          <%= link_to "📝", edit_post_path(post.id)%>
+                        </div>
+                        <div class="navbar-item" style="margin-left: 0%;">
+                          <%= link_to "❌", post_path(post), method: :delete, data: { confirm: "Are you sure?" }%>
+                        </div>
+                      </div>
+                    </div>
+                  <% end %>
+                </p>
+              </div>
+      </article>
+    <%end%>
+    </div>
+    <!-- End -->
+  </div>
+</div>
+    

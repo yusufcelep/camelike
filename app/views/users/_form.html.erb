@@ -1,0 +1,58 @@
+
+
+<div class="columns">
+    <div class="column"></div>
+    <div class="column">
+        <br/>
+        <br/>
+        <div class="box">
+            <h5 class="title is-5 has-text-link has-text-centered is-italic has-text-weight-bold is-family-code">
+            ~ Camelike ~
+            </h5> 
+            <span style='margin-left: 10%'>
+                <a class="is-size-7" href="/posts"> Home </a> | 
+                <a class="is-size-7" href="/posts/new"> New Post </a> |
+                <span class="is-size-7"> <%= link_to "Profile", user_path(@current_user.id) %> |
+                <a class="is-size-7" rel="nofollow" data-method="delete" href="/logout"> Logout </a>
+            </span>
+            <hr>
+            <%= form_for @user do |f| %>
+                <% if @errors %>
+                    <%@errors.map do |error|%>
+                        <p class="has-text-centered	has-text-danger	">
+                            <%= error %>
+                        </p>
+                    <%end%>
+                <% end %>
+            <div class="field">
+                <label class="label">Name</label>
+                <div class="control">
+                    <input class="input" type="text" name="user[name]" id="user_name" placeholder=<%= f.text_field :name %>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Username</label>
+                <div class="control">
+                    <input class="input" type="text" name="user[username]" id="user_username" placeholder=<%= f.text_field :username %></input>  
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Password</label>
+                <div class="control">
+                    <input class="input" type="password" name="user[password]" id="user_password" placeholder=<%=f.text_field :password%></input>         
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Bio</label>
+                <div class="control">
+                    <textarea class="textarea" name="user[bio]" id="user_bio" placeholder=<%= f.text_area :bio %></textarea>
+                </div>
+            </div>
+            <button class="button is-info is-rounded is-small">
+                <span type="submit" name="commit" value="Create" data-disable-with="Create Post">Update Profile!</span>
+            </button>
+            <% end %>
+        </div>
+    </div>
+    <div class="column"></div>
+</div>

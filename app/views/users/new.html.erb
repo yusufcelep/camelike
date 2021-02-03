@@ -1,0 +1,71 @@
+<br/>
+<div class="columns">
+    <div class="column"></div>
+    <div class="column">
+        <div class="box">
+            <div class="content">
+                <h5 class="title is-5 has-text-link has-text-centered is-italic has-text-weight-bold is-family-code">
+                ~ Camelike ~
+                </h5> 
+                        <!-- Content -->
+                        <%= form_for @user do |f| %>
+                            <% if @errors %>
+                                <%@errors.map do |error|%>
+                                    <p class="has-text-centered	has-text-danger	">
+                                        <%= error %>
+                                    </p>
+                                <%end%>
+                            <% end %>
+                            <div class="field">
+                                <p class="control has-icons-left">
+                                <label class="label">Name</label>
+                                    <input class="input" type= "text"
+                                    <%=f.text_field :name%>
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="control has-icons-left">
+                                <label class="label">Username</label>
+                                    <input class="input" type= "text" 
+                                    <%=f.text_field :username%>
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="control has-icons-left">
+                                <label class="label">Password</label>
+                                    <input class="input" type= "password" <%=f.password_field :password%> 
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="control has-icons-left">
+                                <label class="label">Password Confirmation</label>
+                                    <input class="input" type= "password" <%= f.password_field :password_confirmation %> 
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="control has-icons-left">
+                                <label class="label">Profile Picture</label>
+                                    <input class="input" type= "text" <%= f.text_field :img_url %> 
+                                </p>
+                            </div>
+                            <div class="field">
+                                <p class="control">
+                                <label class="label">Bio</label>
+                                    <input class="input" type= "textarea"
+                                    <%= f.text_area :bio, cols: "150", rows: "5"%>
+                                </p>
+                            </div>
+                            <div class="field actions">
+                                <p class="control">
+                                    <button class="button">
+                                        <% f.submit %>Create! 
+                                    </button>
+                                </p>
+                                <p>If you already have an account:  <%= link_to "Log in!", login_path %></p>
+                            </div>
+                        <% end %>
+                        </div>
+        </div>
+    </div>
+    <div class="column"></div>
+</div>
